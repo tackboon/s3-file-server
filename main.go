@@ -180,7 +180,6 @@ func (h HTTPFileServer) ServeXORFile(w http.ResponseWriter, r *http.Request) {
 	// serve the file
 	if _, err := io.Copy(w, xorReader); err != nil {
 		log.Printf("failed to serve file, object_key: %s, err: %v\n", objKey, err)
-		return
 	}
 }
 
@@ -316,6 +315,5 @@ func (h HTTPFileServer) ServeCTRFile(w http.ResponseWriter, r *http.Request) {
 	// serve the file
 	if _, err := io.Copy(w, ctrReader); err != nil {
 		log.Printf("failed to serve file, object_key: %s, err: %v\n", objKey, err)
-		return
 	}
 }
