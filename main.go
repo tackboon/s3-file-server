@@ -46,7 +46,7 @@ func main() {
 	// start file server
 	http.HandleFunc("/xor/", fileServer.ServeXORFile)
 	http.HandleFunc("/ctr/", fileServer.ServeCTRFile)
-	log.Println("file server listening on port 80 ...")
+	log.Println("file server listening on port 8080 ...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("failed to start file server, err: %v", err)
 	}
