@@ -157,8 +157,17 @@ func (h HTTPFileServer) ServeXORFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Accept-Ranges", "bytes")
 	w.Header().Set("Content-Type", *headObj.ContentType)
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", contentLength))
-	w.Header().Set("ETag", *getObj.ETag)
 	w.Header().Set("Last-Modified", getObj.LastModified.Format(http.TimeFormat))
+
+	// get the original file etag
+	tagMap, err := h.s3Client.GetObjectTagging(r.Context(), objKey)
+	if err != nil {
+		http.Error(w, "failed to get tag", http.StatusInternalServerError)
+		return
+	}
+	if tag, ok := tagMap["File-Checksum-Original"]; ok {
+		w.Header().Set("ETag", tag)
+	}
 
 	status := http.StatusOK
 	if isPartial {
@@ -284,8 +293,17 @@ func (h HTTPFileServer) ServeCTRFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Accept-Ranges", "bytes")
 	w.Header().Set("Content-Type", *headObj.ContentType)
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", contentLength))
-	w.Header().Set("ETag", *getObj.ETag)
 	w.Header().Set("Last-Modified", getObj.LastModified.Format(http.TimeFormat))
+
+	// get the original file etag
+	tagMap, err := h.s3Client.GetObjectTagging(r.Context(), objKey)
+	if err != nil {
+		http.Error(w, "failed to get tag", http.StatusInternalServerError)
+		return
+	}
+	if tag, ok := tagMap["File-Checksum-Original"]; ok {
+		w.Header().Set("ETag", tag)
+	}
 
 	status := http.StatusOK
 	if isPartial {

@@ -49,3 +49,22 @@ func (s S3Client) GetRangeObject(ctx context.Context, objectKey string, requeste
 
 	return s.Client.GetObject(ctx, &input)
 }
+
+func (s S3Client) GetObjectTagging(ctx context.Context, objectKey string) (map[string]string, error) {
+	input := s3.GetObjectTaggingInput{
+		Bucket: aws.String(s.Bucket),
+		Key:    aws.String(objectKey),
+	}
+
+	tags, err := s.Client.GetObjectTagging(ctx, &input)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make(map[string]string)
+	for _, tag := range tags.TagSet {
+		out[*tag.Key] = *tag.Value
+	}
+
+	return out, nil
+}
